@@ -98,12 +98,25 @@ $ docker ps -a
 $ docker stats --no-stream
 ```
 
+```text
+CONTAINER ID   IMAGE             STATUS
+500944b02a77   ubuntu            Up
+d24b945cc3c6   nginx:alpine      Up
+e346f1aa3bb3   mission-web:1.0   Up
+ad4dc53b48b3   ubuntu            Exited
+a594660d9f0a   hello-world       Exited
+```
+
 ---
 
 ## 8. hello-world 실행
 
 ```bash
 $ docker run hello-world
+```
+
+```text
+Hello from Docker!
 ```
 
 ---
@@ -129,6 +142,13 @@ ENV APP_ENV=dev
 COPY ./app /usr/share/nginx/html
 ```
 
+### 커스텀 포인트
+
+* nginx:alpine 기반 경량 웹 서버 환경 사용
+* LABEL을 통한 이미지 메타데이터 정의
+* ENV를 통한 환경 변수 설정
+* COPY를 통해 정적 웹 파일을 서버 경로에 복사
+
 ---
 
 ### 빌드 및 실행
@@ -147,7 +167,10 @@ $ curl http://localhost:8080
 $ curl http://localhost:8080
 ```
 
-📌 브라우저 접속: http://localhost:8080
+브라우저 접속: http://localhost:8080
+
+포트 매핑은 컨테이너 내부 서비스에 외부에서 접근하기 위해 필요하며,
+호스트 포트와 컨테이너 포트를 연결하여 웹 서버에 접근할 수 있도록 한다.
 
 ![포트매핑](./images/port.png)
 
@@ -171,7 +194,8 @@ $ curl http://localhost:8081
 $ curl http://localhost:8081
 ```
 
-📌 결과: 수정 즉시 반영됨
+바인드 마운트는 호스트 파일 시스템과 컨테이너를 직접 연결하여
+파일 변경이 즉시 반영되도록 한다.
 
 ![바인드마운트](./images/bind.png)
 
@@ -194,13 +218,39 @@ $ docker exec -it mission-volume-2 bash -lc "cat /data/test.txt"
 hello-volume
 ```
 
-📌 결과: 컨테이너 삭제 후에도 데이터 유지됨
+컨테이너 삭제 후에도 데이터가 유지됨을 확인하였다.
 
 ![볼륨](./images/volume.png)
 
 ---
 
-## 14. 검증 방법
+## 14. Docker 로그 확인
+
+```bash
+$ docker logs mission-web-8080
+```
+
+```text
+nginx/1.29.7
+start worker processes
+GET / HTTP/1.1 200
+GET /favicon.ico 404
+```
+
+웹 요청이 정상적으로 처리되고 로그가 기록됨을 확인하였다.
+
+---
+
+## 15. 경로 개념
+
+* 절대 경로: /Users/...
+* 상대 경로: ./app
+
+Docker에서는 경로를 명확하게 지정하기 위해 절대 경로 사용이 안정적이다.
+
+---
+
+## 16. 검증 방법
 
 | 항목        | 검증 방법               |
 | --------- | ------------------- |
@@ -212,7 +262,7 @@ hello-volume
 
 ---
 
-## 15. 트러블슈팅
+## 17. 트러블슈팅
 
 ### 1. Dockerfile not found
 
@@ -235,7 +285,7 @@ hello-volume
 
 ---
 
-## 16. Git 설정 및 GitHub 연동
+## 18. Git 설정 및 GitHub 연동
 
 ```bash
 $ git config --global user.name "이지헌"
@@ -248,14 +298,11 @@ user.name=이지헌
 user.email=wlgjs0***@naver.com
 ```
 
-### 역할
-
-* Git: 로컬 버전 관리
-* GitHub: 원격 협업 플랫폼
+Git은 로컬 버전 관리 도구이며, GitHub는 원격 협업 플랫폼이다.
 
 ---
 
-## 17. 결론
+## 19. 결론
 
 * Docker를 통해 실행 환경을 표준화할 수 있다
 * 바인드 마운트와 볼륨을 통해 데이터 관리 방식을 이해하였다
